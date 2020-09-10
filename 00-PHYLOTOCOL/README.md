@@ -168,6 +168,9 @@ We will also include an 18S sequence from the following outgroup taxa: N.vectens
 ssu-align -f 18s.fa ssu.dir > ssu-align.out 2> ssu-align.err
 ```
 ```
+stockholm2fasta.pl ceri_18s_ssu_align_out/ceri_18s_ssu_align_out.eukarya.stk > ceri_18s_ssu_align.fa
+```
+```
 iqtree-omp -s 18s_aligned.fa -pre 18s_aligned -nt AUTO -m TEST -bb 1000 > iq.stdout 2> iq.err
 ```
 If the tree produced is congruent with the transcriptome-based tree (see https://github.com/josephryan/DeBiasse_cnidophylogenomics for details), we will report the 18S tree as the main tree. If not, we will proceed to step 3.0.3.
