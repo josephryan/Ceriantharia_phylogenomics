@@ -1,7 +1,7 @@
 # PLANNED ANALYSES FOR ASSEMBLING THE CERIANTHID PHYLOGENY 
  Principle Investigators: Joseph Ryan and Melissa DeBiasse 
- Draft or Version Number: v.1.0  
- Date: 31 July 2020  
+ Draft or Version Number: v.1.1  
+ Date: 08 Sept 2020  
  Note: updates to this document will be tracked through github
  
 ## 1 INTRODUCTION: BACKGROUND INFORMATION AND SCIENTIFIC RATIONALE  
@@ -134,12 +134,89 @@ iqtree-omp -s cerianthid_748_matrix.fa -pre cerianthid_748 -spp cerianthid_748.n
 
 2.5.3 compare the cerianthid relationships in the cerianthid_748 species tree with the cerianthid relationships in the tree generated in 2.4 (after pruning P. magnus). These trees have the same taxa, but a different gene set. If the topologies of these trees differ, we will conclude that the smaller gene matrix we generated in this study lacks phylogenetic signal and therefore, we will not be able to use it to place P. magnus in the cerianthid tree.
 
+#### 3.0 Estimate 18s tree to infer phylogenetic relationships among cerianthid taxa
 
-#### 3 Work completed to-date
+NOTE: This new strategy has been added because attempts to use P. magnus genome sequence failed to produce a tree that fit our pre-determined criteria
+
+3.0.1 We will collect compile the 20 or so 18S sequences from GenBank using the search `(18S or small subunit) AND Ceriantharia[ORGN] BUT NOT 16S BUT NOT 12S`
+```
+Pachycerianthus dohrni (27)
+Cerianthus membranaceus (25)
+Pachycerianthus torreyi (21)
+Botruanthus benedeni (15)
+Pachycerianthus fimbriatus (11)
+Isarachnanthus maderensis (10)
+Pachycerianthus multiplicatus (9)
+Cerianthus sp. 1 ACFM-2019 (5)
+Cerianthus cf. mortenseni ACFM-2019 (3)
+Ceriantheomorphe brasiliensis (3)
+Ceriantheopsis americana (3)
+Botrucnidifer sp. 1 ACFM-2019 (3)
+Pachycerianthus magnus (2)
+Pachycerianthus sp. MRB-2014 (1)
+Pachycerianthus sp. SS63 (1)
+Pachycerianthus borealis (1)
+Pachycerianthus solitarius (1)
+Pachycerianthus maua (1)
+Cerianthus filiformis (1)
+Isarachnanthus nocturnus (1)
+```
+We will also include an 18S sequence from the following outgroup taxa: N.vectensis, A.digitifera, and P. variabilis
+
+3.0.2 We will align the sequences with ssu-align and estimate a tree 
+```
+ssu-align -f 18s.fa ssu.dir > ssu-align.out 2> ssu-align.err
+```
+```
+iqtree-omp -s 18s_aligned.fa -pre 18s_aligned -nt AUTO -m TEST -bb 1000 > iq.stdout 2> iq.err
+```
+If the tree produced is congruent with the transcriptome-based tree (see https://github.com/josephryan/DeBiasse_cnidophylogenomics for details), we will report the 18S tree as the main tree. If not, we will proceed to step 3.0.3.
+
+3.0.3 (Only if 3.0.2 does not produce a congruent tree) Remove from the alignment generated in 3.0.2 all taxa except for P. magnus and the taxa in our transcriptome-based tree and then run a tree.
+```
+iqtree-omp -s 18s_aligned_subset.fa -pre 18s_aligned_subset -nt AUTO -m TEST -bb 1000 > iq.stdout 2> iq.err
+```
+If the tree produced is congruent with the transcriptome-based tree, we will report this tree as the main tree. If not, we will proceed to step 3.0.4.
+
+3.0.4 (Only if 3.0.2 and 3.0.3 do not produce a congruent tree) Using the pruned alignment in 3.0.3, we will run a series of constrained phylogenetic analyses where P. magnus is placed at all possible positions to a constraint tree that is congruent with our transcriptome-based phylogeny. Below are all the constrains that will be applied.
+
+The transcriptome-based topology (does not include Pmag)
+```
+((Imade,(AspL,Inoct)),((Bmex,Cbras),(Pmaua,(CamGM,(CamAT,Cbore)))));
+```
+
+Constraint trees that consider all possible positions of Pmag relative to the transcriptome-based topology
+```
+((Pmag,(Imade,(AspL,Inoct))),((Bmex,Cbras),(Pmaua,(CamGM,(CamAT,Cbore)))));
+(((Imade,Pmag),(AspL,Inoct)),((Bmex,Cbras),(Pmaua,(CamGM,(CamAT,Cbore)))));
+((Imade,(Pmag,(AspL,Inoct))),((Bmex,Cbras),(Pmaua,(CamGM,(CamAT,Cbore)))));
+((Imade,((AspL,Pmag),Inoct)),((Bmex,Cbras),(Pmaua,(CamGM,(CamAT,Cbore)))));
+((Imade,(AspL,(Inoct,Pmag))),((Bmex,Cbras),(Pmaua,(CamGM,(CamAT,Cbore)))));
+((Imade,(AspL,Inoct)),(Pmag,((Bmex,Cbras),(Pmaua,(CamGM,(CamAT,Cbore))))));
+((Imade,(AspL,Inoct)),((Pmag,(Bmex,Cbras)),(Pmaua,(CamGM,(CamAT,Cbore)))));
+((Imade,(AspL,Inoct)),(((Bmex,Pmag),Cbras),(Pmaua,(CamGM,(CamAT,Cbore)))));
+((Imade,(AspL,Inoct)),((Bmex,(Cbras,Pmag)),(Pmaua,(CamGM,(CamAT,Cbore)))));
+((Imade,(AspL,Inoct)),((Bmex,Cbras),(Pmag,(Pmaua,(CamGM,(CamAT,Cbore))))));
+((Imade,(AspL,Inoct)),((Bmex,Cbras),((Pmaua,Pmag),(CamGM,(CamAT,Cbore)))));
+((Imade,(AspL,Inoct)),((Bmex,Cbras),(Pmaua,(Pmag,(CamGM,(CamAT,Cbore))))));
+((Imade,(AspL,Inoct)),((Bmex,Cbras),(Pmaua,((CamGM,Pmag),(CamAT,Cbore)))));
+((Imade,(AspL,Inoct)),((Bmex,Cbras),(Pmaua,(CamGM,(Pmag,(CamAT,Cbore))))));
+((Imade,(AspL,Inoct)),((Bmex,Cbras),(Pmaua,(CamGM,((Pmag,CamAT),Cbore)))));
+((Imade,(AspL,Inoct)),((Bmex,Cbras),(Pmaua,(CamGM,(CamAT,(Pmag,Cbore))))));
+```
+
+Command for the 16 constrained analyses
+```
+iqtree-omp -s 18s_aligned_subset.fa -pre 18s_aligned_subset_constr_1 -nt AUTO -m TEST -bb 1000 -g constr_1
+...
+iqtree-omp -s 18s_aligned_subset.fa -pre 18s_aligned_subset_constr_16 -nt AUTO -m TEST -bb 1000 -g constr_16
+```
+
+#### 4 Work completed to-date
 July 21 2020 steps 2.2 and 2.3.1 - 2.3.3 have been completed
+Sept 04 2020 steps 2.3.4 - 2.3.5 and 2.4 have been completed
 
-
-## 4 PROGRAMS REFERENCED  
+## 5 PROGRAMS REFERENCED  
 
 Dunn Dunn CW, Howison M, Zapata F. Agalma: an automated phylogenomics workflow. BMC bioinformatics. 2013 Dec;14(1):1-9.
 
@@ -153,8 +230,5 @@ Yamada, K. D., Tomii, K., & Katoh, K. (2016). Application of the MAFFT sequence 
 
 ## APPENDIX
 
-Version : Date : Significant Revisions  
-1.1
-1.2  
-1.3  
-1.4 
+Version : Date : Significant Revisions 
+1.1	08 Sept 2020	We recovered only four single-copy orthogroups in step 2.3.4 and step 2.4 yielded a tree in which the outgroup taxa failed to form a clade. Therefore, we rejected results produced in steps 2.3 - 2.4, dispensed with step 2.5, and updated the phylotocol with steps 3.0.1 to 3.0.4.
