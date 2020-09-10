@@ -193,7 +193,6 @@ Constraint trees that consider all possible positions of Pmag relative to the tr
 ((Imade,((AspL,Pmag),Inoct)),((Bmex,Cbras),(Pmaua,(CamGM,(CamAT,Cbore)))));
 ((Imade,(AspL,(Inoct,Pmag))),((Bmex,Cbras),(Pmaua,(CamGM,(CamAT,Cbore)))));
 ((Imade,(AspL,Inoct)),(Pmag,((Bmex,Cbras),(Pmaua,(CamGM,(CamAT,Cbore))))));
-((Imade,(AspL,Inoct)),((Pmag,(Bmex,Cbras)),(Pmaua,(CamGM,(CamAT,Cbore)))));
 ((Imade,(AspL,Inoct)),(((Bmex,Pmag),Cbras),(Pmaua,(CamGM,(CamAT,Cbore)))));
 ((Imade,(AspL,Inoct)),((Bmex,(Cbras,Pmag)),(Pmaua,(CamGM,(CamAT,Cbore)))));
 ((Imade,(AspL,Inoct)),((Bmex,Cbras),(Pmag,(Pmaua,(CamGM,(CamAT,Cbore))))));
