@@ -235,5 +235,7 @@ Yamada, K. D., Tomii, K., & Katoh, K. (2016). Application of the MAFFT sequence 
 ## APPENDIX
 
 Version : Date : Significant Revisions 
+
 1.1	08 Sept 2020	We recovered only four single-copy orthogroups in step 2.3.4 and step 2.4 yielded a tree in which the outgroup taxa failed to form a clade. Therefore, we rejected results produced in steps 2.3 - 2.4, dispensed with step 2.5, and updated the phylotocol with steps 3.0.1 to 3.0.4.
+
 1.2     29 Oct 2020    Added a note to make it clear that our published analyses do not include steps 2.2.6, 2.3, 2.4, 2.5.
