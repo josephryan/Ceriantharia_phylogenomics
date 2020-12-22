@@ -73,9 +73,7 @@ plat.pl --out=P_magn_73 --k=73 --m=450 --left=P_mag_sifted.filtered.A.fq --right
 cat P_magn_31_out_gapClosed.fa P_magn_53_out_gapClosed.fa P_magn_69_out_gapClosed.fa P_magn_73_out_gapClosed.fa > P_magn_genomes.fa 
 ```
 
-# NOTE: Below are planned steps. We carried out steps 2.2.6, 2.3, and 2.4 and after recovering only four single-copy orthogroups dispensed with these steps and step 2.5. The analyses we moved forward with begins at step 3.0
-
-#### 2.2.6 Translate the concatenated nucleotide genome sequence into amino acids in TransDecoder v3.0.1. We set the –m flag to 50 and used the results from BLAST searches to inform the final TransDecoder prediction step
+#### 2.2 Translate the concatenated nucleotide genome sequence into amino acids in TransDecoder v3.0.1. We set the –m flag to 50 and used the results from BLAST searches to inform the final TransDecoder prediction step
 
 ```
 TransDecoder.LongOrfs -t P_magn_genomes.fa -m 50 > td.out 2> td.err
@@ -136,91 +134,85 @@ iqtree-omp -s cerianthid_748_matrix.fa -pre cerianthid_748 -spp cerianthid_748.n
 
 2.5.3 compare the cerianthid relationships in the cerianthid_748 species tree with the cerianthid relationships in the tree generated in 2.4 (after pruning P. magnus). These trees have the same taxa, but a different gene set. If the topologies of these trees differ, we will conclude that the smaller gene matrix we generated in this study lacks phylogenetic signal and therefore, we will not be able to use it to place P. magnus in the cerianthid tree.
 
-#### 3.0 Estimate 18s tree to infer phylogenetic relationships among cerianthid taxa
+#### 2.6 Estimate 18s tree to infer phylogenetic relationships among cerianthid taxa
 
-# NOTE: This new strategy has been added because attempts to use P. magnus genome sequence failed to produce a tree that fit our pre-determined criteria
-
-3.0.1 We will collect compile the 20 or so 18S sequences from GenBank using the search `(18S or small subunit) AND Ceriantharia[ORGN] BUT NOT 16S BUT NOT 12S`
+2.6.1 We will collect compile the 20 or so 18S sequences from GenBank using the search `(18S or small subunit) AND Ceriantharia[ORGN] NOT mitochondrial`
 ```
-Pachycerianthus dohrni (27)
-Cerianthus membranaceus (25)
-Pachycerianthus torreyi (21)
-Botruanthus benedeni (15)
-Pachycerianthus fimbriatus (11)
-Isarachnanthus maderensis (10)
-Pachycerianthus multiplicatus (9)
-Cerianthus sp. 1 ACFM-2019 (5)
-Cerianthus cf. mortenseni ACFM-2019 (3)
-Ceriantheomorphe brasiliensis (3)
-Ceriantheopsis americana (3)
-Botrucnidifer sp. 1 ACFM-2019 (3)
-Pachycerianthus magnus (2)
-Pachycerianthus sp. MRB-2014 (1)
-Pachycerianthus sp. SS63 (1)
+Pachycerianthus dohrni (18)
+Cerianthus membranaceus (16)
+Pachycerianthus torreyi (14)
+Botruanthus benedeni (10)
+Pachycerianthus fimbriatus (7)
+Pachycerianthus multiplicatus (6)
+Isarachnanthus maderensis (6)
+Cerianthus cf. mortenseni ACFM-2019 (2)
+Cerianthus sp. 1 ACFM-2019 (2)
+Ceriantheopsis americana (2)
+Botrucnidifer sp. 1 ACFM-2019 (2)
+Pachycerianthus magnus (1)
 Pachycerianthus borealis (1)
-Pachycerianthus solitarius (1)
 Pachycerianthus maua (1)
 Cerianthus filiformis (1)
-Isarachnanthus nocturnus (1)
+Ceriantheomorphe brasiliensis (1)
 ```
-We will also include an 18S sequence from the following outgroup taxa: N.vectensis, A.digitifera, and P. variabilis
+We will also include the following outgroup taxa: N.vectensis, A.digitifera, and P. variabilis
 
-3.0.2 We will align the sequences with ssu-align and estimate a tree 
+2.6.2 We will align the sequences with ssu-align and estimate a tree 
 ```
 ssu-align -f 18s.fa ssu.dir > ssu-align.out 2> ssu-align.err
 ```
 ```
-stockholm2fasta.pl ceri_18s_ssu_align_out/ceri_18s_ssu_align_out.eukarya.stk > ceri_18s_ssu_align.fa
-```
-```
 iqtree-omp -s 18s_aligned.fa -pre 18s_aligned -nt AUTO -m TEST -bb 1000 > iq.stdout 2> iq.err
 ```
-If the tree produced is congruent with the transcriptome-based tree (see https://github.com/josephryan/DeBiasse_cnidophylogenomics for details), we will report the 18S tree as the main tree. If not, we will proceed to step 3.0.3.
+If the tree produced is congruent with the transcriptome-based tree (see https://github.com/josephryan/DeBiasse_cnidophylogenomics for details), we will report the 18S tree as the main tree. If not, we will proceed to step 2.6.3.
 
-3.0.3 (Only if 3.0.2 does not produce a congruent tree) Remove from the alignment generated in 3.0.2 all taxa except for P. magnus and the taxa in our transcriptome-based tree and then run a tree.
+2.6.3 Remove all taxa except for P. magnus and the taxa in our transcriptome-based tree and then run a tree.
+```
+ssu-align -f 18s_subset.fa ssu.dir > ssu-align_subset.out 2> ssu-align_subset.err
+```
 ```
 iqtree-omp -s 18s_aligned_subset.fa -pre 18s_aligned_subset -nt AUTO -m TEST -bb 1000 > iq.stdout 2> iq.err
 ```
-If the tree produced is congruent with the transcriptome-based tree, we will report this tree as the main tree. If not, we will proceed to step 3.0.4.
+If the tree produced is congruent with the transcriptome-based tree, we will report this tree as the main tree. If not, we will proceed to step 2.6.4.
 
-3.0.4 (Only if 3.0.2 and 3.0.3 do not produce a congruent tree) Using the pruned alignment in 3.0.3, we will run a series of constrained phylogenetic analyses where P. magnus is placed at all possible positions to a constraint tree that is congruent with our transcriptome-based phylogeny. Below are all the constrains that will be applied.
+2.6.4 We will run constrained analyses with P. magnus and the taxa present in our transcriptome-based tree. We will use the following constraint topologies to estimate the cerianthid phylogeny with P. magnus constrained in every possible position in the tree. We will report the tree with the best likelihood score as the main tree.
 
-The transcriptome-based topology (does not include Pmag)
-```
-((Imade,(AspL,Inoct)),((Bmex,Cbras),(Pmaua,(CamGM,(CamAT,Cbore)))));
-```
+#### 2.7 Estimate species phylogeny of cerianthid taxa from transcriptomic data 
 
-Constraint trees that consider all possible positions of Pmag relative to the transcriptome-based topology
+2.7.1 Infer single copy orthogroups from the transcriptomes of the following taxa using OrthoFinder v2.2.3
 ```
-((Pmag,(Imade,(AspL,Inoct))),((Bmex,Cbras),(Pmaua,(CamGM,(CamAT,Cbore)))));
-(((Imade,Pmag),(AspL,Inoct)),((Bmex,Cbras),(Pmaua,(CamGM,(CamAT,Cbore)))));
-((Imade,(Pmag,(AspL,Inoct))),((Bmex,Cbras),(Pmaua,(CamGM,(CamAT,Cbore)))));
-((Imade,((AspL,Pmag),Inoct)),((Bmex,Cbras),(Pmaua,(CamGM,(CamAT,Cbore)))));
-((Imade,(AspL,(Inoct,Pmag))),((Bmex,Cbras),(Pmaua,(CamGM,(CamAT,Cbore)))));
-((Imade,(AspL,Inoct)),(Pmag,((Bmex,Cbras),(Pmaua,(CamGM,(CamAT,Cbore))))));
-((Imade,(AspL,Inoct)),(((Bmex,Pmag),Cbras),(Pmaua,(CamGM,(CamAT,Cbore)))));
-((Imade,(AspL,Inoct)),((Bmex,(Cbras,Pmag)),(Pmaua,(CamGM,(CamAT,Cbore)))));
-((Imade,(AspL,Inoct)),((Bmex,Cbras),(Pmag,(Pmaua,(CamGM,(CamAT,Cbore))))));
-((Imade,(AspL,Inoct)),((Bmex,Cbras),((Pmaua,Pmag),(CamGM,(CamAT,Cbore)))));
-((Imade,(AspL,Inoct)),((Bmex,Cbras),(Pmaua,(Pmag,(CamGM,(CamAT,Cbore))))));
-((Imade,(AspL,Inoct)),((Bmex,Cbras),(Pmaua,((CamGM,Pmag),(CamAT,Cbore)))));
-((Imade,(AspL,Inoct)),((Bmex,Cbras),(Pmaua,(CamGM,(Pmag,(CamAT,Cbore))))));
-((Imade,(AspL,Inoct)),((Bmex,Cbras),(Pmaua,(CamGM,((Pmag,CamAT),Cbore)))));
-((Imade,(AspL,Inoct)),((Bmex,Cbras),(Pmaua,(CamGM,(CamAT,(Pmag,Cbore))))));
+Arachnanthus sp.
+Isarachnanthus nocturnus
+Isarachnanthus maderensis
+Botruanthus mexicanus
+Cerianthus borealis
+Ceriantheopsis americana
+Pachycerianthus maua
+Acropora digitifera
+Nematostella vectensis
+Protopalythoa variabilis
 ```
 
-Command for the 16 constrained analyses
 ```
-iqtree-omp -s 18s_aligned_subset.fa -pre 18s_aligned_subset_constr_1 -nt AUTO -m TEST -bb 1000 -g constr_1
-...
-iqtree-omp -s 18s_aligned_subset.fa -pre 18s_aligned_subset_constr_16 -nt AUTO -m TEST -bb 1000 -g constr_16
+orthofinder -f [dir_w_protein_fasta_files] -S diamond -M msa -os > of.out 2> of.err &
+```
+2.7.2 align the single-copy loci generated by OrthoFinder
+```
+mafft [in.fa] > [out.mafft.fa]
+```
+2.7.3 concatenate the single-copy loci alignments to create a matrix and partition file for use in downstream phylogenomic analyses using ```fasta2phylomatrix``` (available in https://github.com/josephryan/RyanLabPhylogenomicTools).
+
+2.7.4 estimate species phylogeny
+```
+iqtree-omp -s ceri_matrix.fa -pre ceri -spp ceri.nex -nt AUTO -m TEST -bb 1000 > iq.stdout 2> iq.err
 ```
 
-#### 4 Work completed to-date
+#### 3 Work completed to-date
 July 21 2020 steps 2.2 and 2.3.1 - 2.3.3 have been completed
 Sept 04 2020 steps 2.3.4 - 2.3.5 and 2.4 have been completed
+Dec 21 2020 steps 2.6 and 2.7 have been completed
 
-## 5 PROGRAMS REFERENCED  
+## 4 PROGRAMS REFERENCED  
 
 Dunn Dunn CW, Howison M, Zapata F. Agalma: an automated phylogenomics workflow. BMC bioinformatics. 2013 Dec;14(1):1-9.
 
@@ -235,7 +227,5 @@ Yamada, K. D., Tomii, K., & Katoh, K. (2016). Application of the MAFFT sequence 
 ## APPENDIX
 
 Version : Date : Significant Revisions 
-
-1.1	08 Sept 2020	We recovered only four single-copy orthogroups in step 2.3.4 and step 2.4 yielded a tree in which the outgroup taxa failed to form a clade. Therefore, we rejected results produced in steps 2.3 - 2.4, dispensed with step 2.5, and updated the phylotocol with steps 3.0.1 to 3.0.4.
-
-1.2     29 Oct 2020    Added a note to make it clear that our published analyses do not include steps 2.2.6, 2.3, 2.4, 2.5.
+1.1	08 Sept 2020	We recovered only four single-copy orthogroups in step 2.3.4 and step 2.4 yielded a tree in which the outgroup taxa failed to form a clade. Therefore, we set aside results produced in steps 2.3 - 2.4, omitted step 2.5 and updated the phylotocol with step 2.6.  
+1.2	21 Dec 2020	We added step 2.7 to estimate a species phylogeny from transcriptome sequences
